@@ -9,12 +9,16 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    // In your handleLogin function
+    console.log({ username, password, role }); // Log the payload to verify
+
     try {
       const response = await axios.post('http://localhost:5000/auth/login', { username, password, role });
       setMessage(response.data.message);
     } catch (error) {
       setMessage(error.response.data.error);
     }
+
   };
 
   return (

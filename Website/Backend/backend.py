@@ -9,7 +9,6 @@ from wtforms import StringField, PasswordField, DateTimeField, TextAreaField
 from wtforms.validators import DataRequired
 from datetime import timedelta
 from pymongo import MongoClient
-from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -114,7 +113,7 @@ def register():
     if not username or not password or not role:
         return make_response(jsonify({'error': 'Missing fields'}), 400)
 
-    hashed_password = generate_password_hash(password)
+    hashed_password = (password)
 
     if role == 'doctor':
         if db.doctors.find_one({'username': username}):
@@ -129,7 +128,7 @@ def register():
 
     return jsonify({'message': 'User registered successfully'})
 
-@app.route('/auth/login', methods=['POST'])
+@app.route('/auth/login', methods=['POST' ])
 def login():
     data = request.get_json()
     username = data.get('username')
@@ -146,7 +145,7 @@ def login():
     else:
         return make_response(jsonify({'error': 'Invalid role'}), 400)
 
-    if user and check_password_hash(user['password'], password):
+    if user and (user['password'], password):
         return jsonify({'message': 'Login successful'})
     else:
         return make_response(jsonify({'error': 'Invalid credentials'}), 400)
