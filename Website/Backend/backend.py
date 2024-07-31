@@ -1,4 +1,4 @@
-from flask import Flask, render_template_string
+from flask import Flask, render_template_string, request, jsonify, make_response
 from flask_cors import CORS
 from flask_mail import Mail
 from flask_session import Session
@@ -9,6 +9,7 @@ from wtforms import StringField, PasswordField, DateTimeField, TextAreaField
 from wtforms.validators import DataRequired
 from datetime import timedelta
 from pymongo import MongoClient
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -101,6 +102,95 @@ initialize_db()
 @app.route('/')
 def home():
     return render_template_string('<h1>Welcome to the Admin Panel</h1><p>You can access the admin panel at <a href="/admin">/admin</a></p>')
+
+# Authentication routes
+@app.route('/auth/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+    role = data.get('role')  # 'doctor' or 'patient'
+
+    if not username or not password or not role:
+        return make_response(jsonify({'error': 'Missing fields'}), 400)
+
+    hashed_password = generate_password_hash(password)
+
+    if role == 'doctor':
+        if db.doctors.find_one({'username': username}):
+            return make_response(jsonify({'error': 'User already exists'}), 400)
+        db.doctors.insert_one({'username': username, 'password': hashed_password})
+    elif role == 'patient':
+        if db.patients.find_one({'username': username}):
+            return make_response(jsonify({'error': 'User already exists'}), 400)
+        db.patients.insert_one({'username': username, 'password': hashed_password})
+    else:
+        return make_response(jsonify({'error': 'Invalid role'}), 400)
+
+    return jsonify({'message': 'User registered successfully'})
+
+@app.route('/auth/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+    role = data.get('role')  # 'doctor' or 'patient'
+
+    if not username or not password or not role:
+        return make_response(jsonify({'error': 'Missing fields'}), 400)
+
+    if role == 'doctor':
+        user = db.doctors.find_one({'username': username})
+    elif role == 'patient':
+        user = db.patients.find_one({'username': username})
+    else:
+        return make_response(jsonify({'error': 'Invalid role'}), 400)
+
+    if user and check_password_hash(user['password'], password):
+        return jsonify({'message': 'Login successful'})
+    else:
+        return make_response(jsonify({'error': 'Invalid credentials'}), 400)
+
+# CRUD routes
+@app.route('/doctors', methods=['GET', 'POST'])
+def manage_doctors():
+    if request.method == 'GET':
+        doctors = list(db.doctors.find({}, {'_id': 0, 'password': 0}))
+        return jsonify(doctors)
+    elif request.method == 'POST':
+        data = request.get_json()
+        db.doctors.insert_one(data)
+        return jsonify({'message': 'Doctor added successfully'})
+
+@app.route('/patients', methods=['GET', 'POST'])
+def manage_patients():
+    if request.method == 'GET':
+        patients = list(db.patients.find({}, {'_id': 0, 'password': 0}))
+        return jsonify(patients)
+    elif request.method == 'POST':
+        data = request.get_json()
+        db.patients.insert_one(data)
+        return jsonify({'message': 'Patient added successfully'})
+
+@app.route('/appointments', methods=['GET', 'POST'])
+def manage_appointments():
+    if request.method == 'GET':
+        appointments = list(db.appointments.find({}, {'_id': 0}))
+        return jsonify(appointments)
+    elif request.method == 'POST':
+        data = request.get_json()
+        db.appointments.insert_one(data)
+        return jsonify({'message': 'Appointment added successfully'})
+
+@app.route('/prescriptions', methods=['GET', 'POST'])
+def manage_prescriptions():
+    if request.method == 'GET':
+        prescriptions = list(db.prescriptions.find({}, {'_id': 0}))
+        return jsonify(prescriptions)
+    elif request.method == 'POST':
+        data = request.get_json()
+        db.prescriptions.insert_one(data)
+        return jsonify({'message': 'Prescription added successfully'})
 
 if __name__ == '__main__':
     app.run(debug=True)
