@@ -1,6 +1,15 @@
-pip install pymongo;
-pip install flask;
-pip install flask_cors;
-pip install flask_mail;
-pip install flask-session;
-pip install flask_admin;
+﻿Flask
+Flask-Admin
+Flask-Cors
+Flask-Ext
+Flask-Mail
+Flask-Migrate
+flask-mongoengine
+Flask-PyMongo
+Flask-WTF
+Jinja2
+mongoengine
+pymongo
+Werkzeug
+WTForms
+Flask-Session
