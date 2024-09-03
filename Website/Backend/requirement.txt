@@ -1,0 +1,15 @@
+﻿Flask
+Flask-Admin
+Flask-Cors
+Flask-Ext
+Flask-Mail
+Flask-Migrate
+flask-mongoengine
+Flask-PyMongo
+Flask-WTF
+Jinja2
+mongoengine
+pymongo
+Werkzeug
+WTForms
+Flask-Session
