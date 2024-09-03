@@ -8,7 +8,7 @@ function Prescriptions() {
 
   useEffect(() => {
     const fetchPrescriptions = async () => {
-      const response = await axios.get('http://localhost:5000/prescriptions');
+      const response = await axios.get('http://127.0.0.1:5000/auth/prescriptions');
       setPrescriptions(response.data);
     };
     fetchPrescriptions();
@@ -17,7 +17,7 @@ function Prescriptions() {
   const handleAddPrescription = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/prescriptions', { details });
+      const response = await axios.post('http://127.0.0.1:5000/auth/prescriptions', { details });
       setMessage(response.data.message);
       setPrescriptions([...prescriptions, { details }]);
     } catch (error) {

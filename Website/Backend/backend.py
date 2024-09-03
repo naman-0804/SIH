@@ -1,4 +1,4 @@
-from flask import Flask, render_template_string, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 from flask_mail import Mail
 from flask_session import Session
@@ -19,8 +19,12 @@ app.config['SESSION_COOKIE_SECURE'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
 Session(app)
 
+# Allowed origins
+allowed_origins = ["http://localhost:3000", "https://sihsite.vercel.app"]
+
+# CORS configuration
 CORS(app, resources={r"/auth/*": {
-    "origins": ["http://localhost:3000", "https://sihsite.vercel.app"],
+    "origins": allowed_origins,
     "methods": ["POST", "OPTIONS", "GET"],
     "allow_headers": ["Content-Type", "Authorization"],
     "supports_credentials": True
@@ -28,11 +32,12 @@ CORS(app, resources={r"/auth/*": {
 
 @app.after_request
 def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', 'https://sihsite.vercel.app')
+    origin = request.headers.get('Origin')
+    if origin in allowed_origins:
+        response.headers.add('Access-Control-Allow-Origin', origin)
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
     return response
-
 # MongoDB configuration
 client = MongoClient(
     'mongodb+srv://namansrivastava1608:sihsite@sihsite.oecua77.mongodb.net/?retryWrites=true&w=majority&appName=sihsite',
@@ -44,7 +49,7 @@ db = client.sihsite
 class DoctorForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
-
+    role= StringField('Role',validators=[DataRequired()])
 class PatientForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])

@@ -8,7 +8,7 @@ function Appointments() {
 
   useEffect(() => {
     const fetchAppointments = async () => {
-      const response = await axios.get('http://localhost:5000/appointments');
+      const response = await axios.get('http://127.0.0.1:5000/auth/appointments');
       setAppointments(response.data);
     };
     fetchAppointments();
@@ -17,7 +17,7 @@ function Appointments() {
   const handleAddAppointment = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/appointments', { details });
+      const response = await axios.post('http://127.0.0.1:5000/auth/appointments', { details });
       setMessage(response.data.message);
       setAppointments([...appointments, { details }]);
     } catch (error) {
