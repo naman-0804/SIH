@@ -1,21 +1,27 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import ReactDOM from 'react-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import App from '../src/pages/app'; // Ensure the correct path
+import DoctorLogin from '../src/pages/doctorlogin'; // Ensure the correct path
+import PatientLogin from '../src/pages/patientlogin'; // Ensure the correct path
+import Register from '../src/pages/register'; // Ensure the correct path
+import Appointments from '../src/pages/appointement'; // Ensure the correct path
+import Prescriptions from '../src/pages/prescription'; // Ensure the correct path
+import DoctorPanel from '../src/pages/doctorpanel'; // Ensure the correct path
+import PatientPanel from '../src/pages/patientpanel'; // Ensure the correct path
 
-function App() {
-  return (
-    <div className="App">
-      <h1>Medical Admin Panel</h1>
-      <nav>
-        <ul>
-          <li><Link to="/doctorlogin">Doctor Login</Link></li>
-          <li><Link to="/patientlogin">Patient Login</Link></li>
-          <li><Link to="/register">Register</Link></li>
-          <li><Link to="/appointments">Manage Appointments</Link></li>
-          <li><Link to="/prescriptions">Manage Prescriptions</Link></li>
-        </ul>
-      </nav>
-    </div>
-  );
-}
-
-export default App;
+ReactDOM.render(
+  <Router>
+    <Routes>
+      <Route path="/" element={<App />} />
+      <Route path="/doctorlogin" element={<DoctorLogin />} />
+      <Route path="/patientlogin" element={<PatientLogin />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/appointments" element={<Appointments />} />
+      <Route path="/prescriptions" element={<Prescriptions />} />
+      <Route path="/doctorpanel" element={<DoctorPanel />} />
+      <Route path="/patientpanel" element={<PatientPanel />} />
+    </Routes>
+  </Router>,
+  document.getElementById('root')
+);
