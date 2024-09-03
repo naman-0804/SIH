@@ -9,6 +9,7 @@ from wtforms import StringField, PasswordField, DateTimeField, TextAreaField
 from wtforms.validators import DataRequired
 from datetime import timedelta
 from pymongo import MongoClient
+from flask import Flask, request, jsonify, make_response, session
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -19,12 +20,9 @@ app.config['SESSION_COOKIE_SECURE'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
 Session(app)
 
-# Allowed origins
-allowed_origins = ["http://localhost:3000", "https://sihsite.vercel.app"]
-
-# CORS configuration
+# Specify allowed origins
 CORS(app, resources={r"/auth/*": {
-    "origins": allowed_origins,
+    "origins": "http://localhost:3000",  # Replace with your frontend URL
     "methods": ["POST", "OPTIONS", "GET"],
     "allow_headers": ["Content-Type", "Authorization"],
     "supports_credentials": True
@@ -32,12 +30,12 @@ CORS(app, resources={r"/auth/*": {
 
 @app.after_request
 def after_request(response):
-    origin = request.headers.get('Origin')
-    if origin in allowed_origins:
-        response.headers.add('Access-Control-Allow-Origin', origin)
+    response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
     return response
+
 # MongoDB configuration
 client = MongoClient(
     'mongodb+srv://namansrivastava1608:sihsite@sihsite.oecua77.mongodb.net/?retryWrites=true&w=majority&appName=sihsite',
@@ -140,7 +138,7 @@ def register():
 
     return jsonify({'message': 'User registered successfully'})
 
-@app.route('/auth/login', methods=['POST' ])
+@app.route('/auth/login', methods=['POST'])
 def login():
     data = request.get_json()
     username = data.get('username')
@@ -157,31 +155,38 @@ def login():
     else:
         return make_response(jsonify({'error': 'Invalid role'}), 400)
 
-    if user and (user['password'], password):
+    if user and user['password'] == password:
+        session['logged_in'] = True
+        session['username'] = username
+        session['role'] = role
         return jsonify({'message': 'Login successful'})
     else:
         return make_response(jsonify({'error': 'Invalid credentials'}), 400)
+    pass
 
-# CRUD routes
-@app.route('/doctors', methods=['GET', 'POST'])
-def manage_doctors():
-    if request.method == 'GET':
-        doctors = list(db.doctors.find({}, {'_id': 0, 'password': 0}))
-        return jsonify(doctors)
-    elif request.method == 'POST':
-        data = request.get_json()
-        db.doctors.insert_one(data)
-        return jsonify({'message': 'Doctor added successfully'})
+@app.route('/auth/get_user_data', methods=['GET'])
+def get_user_data():
+    if 'logged_in' not in session or not session['logged_in']:
+        return jsonify({'error': 'Not logged in'}), 401
 
-@app.route('/patients', methods=['GET', 'POST'])
-def manage_patients():
-    if request.method == 'GET':
-        patients = list(db.patients.find({}, {'_id': 0, 'password': 0}))
-        return jsonify(patients)
-    elif request.method == 'POST':
-        data = request.get_json()
-        db.patients.insert_one(data)
-        return jsonify({'message': 'Patient added successfully'})
+    username = session['username']
+    role = session['role']
+
+    if role == 'doctor':
+        user = db.doctors.find_one({'username': username})
+    elif role == 'patient':
+        user = db.patients.find_one({'username': username})
+    else:
+        return jsonify({'error': 'Invalid role'}), 400
+
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    return jsonify({
+        'username': user['username'],
+        'role': role
+    }), 200
+
 
 @app.route('/appointments', methods=['GET', 'POST'])
 def manage_appointments():
