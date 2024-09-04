@@ -217,7 +217,16 @@ def prescribe_medicine():
     return jsonify({'message': 'Prescription added successfully'})
 
 # Patient Panel API Endpoints
-
+@app.route('/patients/doctors', methods=['GET'])
+def get_doctor_list():
+    if 'logged_in' not in session or session['role'] != 'patient':
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    try:
+        doctors = list(db.doctors.find({}, {'_id': 0, 'password': 0}))
+        return jsonify(doctors), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 @app.route('/patients/appointments', methods=['POST'])
 def schedule_appointment():
     if 'logged_in' not in session or session['role'] != 'patient':
