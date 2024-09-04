@@ -13,4 +13,3 @@ pymongo
 Werkzeug
 WTForms
 Flask-Session
-Flask-Redirect
