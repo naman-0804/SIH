@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response,redirect
 from flask_cors import CORS
 from flask_mail import Mail
 from flask_session import Session
@@ -11,7 +11,6 @@ from datetime import timedelta
 from pymongo import MongoClient
 from flask import Flask, request, jsonify, make_response, session
 from wtforms import StringField, PasswordField, DateTimeField, TextAreaField, SelectField  # Import SelectField
-from flask import Flask, redirect
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
