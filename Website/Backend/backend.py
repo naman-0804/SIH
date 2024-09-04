@@ -23,7 +23,7 @@ Session(app)
 
 CORS(app, resources={r"/auth/*": {
     "origins": [
-        "https://sihsite-mi4q8sznj-un-identifieds-projects.vercel.app", 
+        "https://sihsite.vercel.app", 
         "http://localhost:3000"
     ], 
     "methods": ["POST", "OPTIONS", "GET"],
