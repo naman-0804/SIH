@@ -6,6 +6,7 @@ function DoctorPanel() {
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState('');
   const [patients, setPatients] = useState([]);
+  const [filteredPatients, setFilteredPatients] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [prescriptionDetails, setPrescriptionDetails] = useState('');
   const [selectedPatient, setSelectedPatient] = useState('');
@@ -34,6 +35,11 @@ function DoctorPanel() {
       try {
         const response = await axios.get('http://127.0.0.1:5000/doctors/appointments', { withCredentials: true });
         setAppointments(response.data);
+        // Filter patients based on appointments
+        if (response.data.length > 0) {
+          const patientUsernames = response.data.map(app => app.patient_username);
+          setFilteredPatients(patients.filter(patient => patientUsernames.includes(patient.username)));
+        }
       } catch (error) {
         setError('Error fetching appointments.');
       }
@@ -43,7 +49,7 @@ function DoctorPanel() {
     fetchPatientList();
     fetchAppointments();
     setLoading(false);
-  }, []);
+  }, [patients]);
 
   const handlePrescriptionSubmit = async (e) => {
     e.preventDefault();
@@ -77,7 +83,7 @@ function DoctorPanel() {
           </tr>
         </thead>
         <tbody>
-          {patients.map(patient => (
+          {filteredPatients.map(patient => (
             <tr key={patient.username}>
               <td>{patient.username}</td>
             </tr>
@@ -111,7 +117,7 @@ function DoctorPanel() {
           <label>Select Patient:</label>
           <select value={selectedPatient} onChange={(e) => setSelectedPatient(e.target.value)} required>
             <option value="">--Select Patient--</option>
-            {patients.map(patient => (
+            {filteredPatients.map(patient => (
               <option key={patient.username} value={patient.username}>{patient.username}</option>
             ))}
           </select>
