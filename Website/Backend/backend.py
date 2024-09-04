@@ -22,7 +22,7 @@ Session(app)
 
 # Specify allowed origins
 CORS(app, resources={r"/auth/*": {
-    "origins": "http://localhost:3000",  # Replace with your frontend URL
+    "origins": ["http://localhost:3000"], 
     "methods": ["POST", "OPTIONS", "GET"],
     "allow_headers": ["Content-Type", "Authorization"],
     "supports_credentials": True
@@ -186,27 +186,59 @@ def get_user_data():
         'username': user['username'],
         'role': role
     }), 200
+# Doctor Panel API Endpoints
 
+@app.route('/doctors/patients', methods=['GET'])
+def get_patient_list():
+    if 'logged_in' not in session or session['role'] != 'doctor':
+        return jsonify({'error': 'Unauthorized'}), 403
+    patients = list(db.patients.find({}, {'_id': 0, 'password': 0}))
+    return jsonify(patients)
 
-@app.route('/appointments', methods=['GET', 'POST'])
-def manage_appointments():
-    if request.method == 'GET':
-        appointments = list(db.appointments.find({}, {'_id': 0}))
-        return jsonify(appointments)
-    elif request.method == 'POST':
-        data = request.get_json()
-        db.appointments.insert_one(data)
-        return jsonify({'message': 'Appointment added successfully'})
+@app.route('/doctors/appointments', methods=['GET'])
+def get_doctor_appointments():
+    if 'logged_in' not in session or session['role'] != 'doctor':
+        return jsonify({'error': 'Unauthorized'}), 403
+    username = session['username']
+    appointments = list(db.appointments.find({'doctor_username': username}, {'_id': 0}))
+    return jsonify(appointments)
 
-@app.route('/prescriptions', methods=['GET', 'POST'])
-def manage_prescriptions():
-    if request.method == 'GET':
-        prescriptions = list(db.prescriptions.find({}, {'_id': 0}))
-        return jsonify(prescriptions)
-    elif request.method == 'POST':
-        data = request.get_json()
-        db.prescriptions.insert_one(data)
-        return jsonify({'message': 'Prescription added successfully'})
+@app.route('/doctors/prescriptions', methods=['POST'])
+def prescribe_medicine():
+    if 'logged_in' not in session or session['role'] != 'doctor':
+        return jsonify({'error': 'Unauthorized'}), 403
+    data = request.get_json()
+    prescription = {
+        'doctor_username': session['username'],
+        'patient_username': data.get('patient_username'),
+        'prescription_details': data.get('prescription_details')
+    }
+    db.prescriptions.insert_one(prescription)
+    return jsonify({'message': 'Prescription added successfully'})
+
+# Patient Panel API Endpoints
+
+@app.route('/patients/appointments', methods=['POST'])
+def schedule_appointment():
+    if 'logged_in' not in session or session['role'] != 'patient':
+        return jsonify({'error': 'Unauthorized'}), 403
+    data = request.get_json()
+    appointment = {
+        'doctor_username': data.get('doctor_username'),
+        'patient_username': session['username'],
+        'appointment_time': data.get('appointment_time'),
+        'description': data.get('description')
+    }
+    db.appointments.insert_one(appointment)
+    return jsonify({'message': 'Appointment scheduled successfully'})
+
+@app.route('/patients/medicines', methods=['GET'])
+def get_medicine_list():
+    if 'logged_in' not in session or session['role'] != 'patient':
+        return jsonify({'error': 'Unauthorized'}), 403
+    username = session['username']
+    prescriptions = list(db.prescriptions.find({'patient_username': username}, {'_id': 0}))
+    return jsonify(prescriptions)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

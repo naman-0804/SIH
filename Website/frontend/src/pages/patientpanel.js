@@ -15,7 +15,6 @@ function PatientPanel() {
         setError('Error fetching user data. Please log in.');
       }
     };
-
     fetchUserData();
   }, []);
 
