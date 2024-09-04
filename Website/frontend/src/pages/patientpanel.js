@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import '../pages/Css/Patientpanel.css'; 
 
 function PatientPanel() {
   const [userData, setUserData] = useState(null);
@@ -18,49 +19,31 @@ function PatientPanel() {
     { value: 'general', label: 'General' }
   ]);
 
-  const fetchAppointments = async () => {
-    try {
-      const response = await axios.get('http://127.0.0.1:5000/patients/appointments', { withCredentials: true });
-      setAppointments(response.data);
-    } catch (error) {
-      setError('Error fetching appointments.');
-    }
-  };
-
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:5000/auth/get_user_data');
-        setUserData(response.data);
+        // Fetch user data
+        const userResponse = await axios.get('http://127.0.0.1:5000/auth/get_user_data');
+        setUserData(userResponse.data);
+
+        // Fetch doctors
+        const doctorResponse = await axios.get('http://127.0.0.1:5000/patients/doctors', { withCredentials: true });
+        setDoctors(doctorResponse.data);
+
+        // Fetch appointments
+        const appointmentResponse = await axios.get('http://127.0.0.1:5000/patients/appointments', { withCredentials: true });
+        setAppointments(appointmentResponse.data);
+
+        // Fetch prescriptions
+        const prescriptionResponse = await axios.get('http://127.0.0.1:5000/patients/medicines', { withCredentials: true });
+        setPrescriptions(prescriptionResponse.data);
       } catch (error) {
-        setError('Error fetching user data. Please log in.');
+        setError('Error fetching data.');
       }
     };
 
-    const fetchDoctors = async () => {
-      try {
-        const response = await axios.get('http://127.0.0.1:5000/patients/doctors', { withCredentials: true });
-        console.log('Doctors fetched:', response.data); // Debug log
-        setDoctors(response.data);
-      } catch (error) {
-        setError('Error fetching doctor list.');
-      }
-    };
-
-    const fetchPrescriptions = async () => {
-      try {
-        const response = await axios.get('http://127.0.0.1:5000/patients/medicines', { withCredentials: true });
-        setPrescriptions(response.data);
-      } catch (error) {
-        setError('Error fetching medicines.');
-      }
-    };
-
-    fetchUserData();
-    fetchDoctors();
-    fetchAppointments();
-    fetchPrescriptions();
-  }, []);
+    fetchData();
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   const handleAppointmentSubmit = async (e) => {
     e.preventDefault();
@@ -74,7 +57,9 @@ function PatientPanel() {
       setSelectedDoctor('');
       setAppointmentDate('');
       setIssue('');
-      fetchAppointments();
+      // Refresh the appointments list
+      const response = await axios.get('http://127.0.0.1:5000/patients/appointments', { withCredentials: true });
+      setAppointments(response.data);
     } catch (error) {
       setError('Error scheduling appointment.');
     }
@@ -88,67 +73,100 @@ function PatientPanel() {
     ? doctors.filter(doctor => doctor.department.toLowerCase() === selectedDepartment.toLowerCase())
     : doctors;
 
-  console.log('Selected Department:', selectedDepartment); // Debug log
-  console.log('Filtered Doctors:', filteredDoctors); // Debug log
-
   return (
-    <div>
-      {error && <p>{error}</p>}
-      {userData && <p>Welcome, {userData.username}!</p>}
+    <div className="patient-panel-container">
+      {error && <p id="error-message">{error}</p>}
+      {userData && <h1 id="welcome-message">Welcome, {userData.username}!</h1>}
 
-      <h2>Schedule Appointment</h2>
-      <form onSubmit={handleAppointmentSubmit}>
-        <div>
-          <label>Select Department:</label>
-          <select value={selectedDepartment} onChange={(e) => setSelectedDepartment(e.target.value)} required>
+      <h2 id="schedule-appointment-header">Schedule Appointment</h2>
+      <form onSubmit={handleAppointmentSubmit} id="appointment-form">
+        <div id="department-select">
+          <label htmlFor="department">Select Department:</label>
+          <select 
+            id="department" 
+            value={selectedDepartment} 
+            onChange={(e) => setSelectedDepartment(e.target.value)} 
+            required
+          >
             <option value="">--Select Department--</option>
             {departments.map(dept => (
               <option key={dept.value} value={dept.value}>{dept.label}</option>
             ))}
           </select>
         </div>
-        <div>
-          <label>Select Doctor:</label>
-          <select value={selectedDoctor} onChange={(e) => setSelectedDoctor(e.target.value)} required>
+        <div id="doctor-select">
+          <label htmlFor="doctor">Select Doctor:</label>
+          <select 
+            id="doctor" 
+            value={selectedDoctor} 
+            onChange={(e) => setSelectedDoctor(e.target.value)} 
+            required
+          >
             <option value="">--Select Doctor--</option>
             {filteredDoctors.map(doctor => (
               <option key={doctor.username} value={doctor.username}>{doctor.username}</option>
             ))}
           </select>
         </div>
-        <div>
-          <label>Appointment Date:</label>
+        <div id="appointment-date">
+          <label htmlFor="appointment-date-input">Appointment Date:</label>
           <input 
+            id="appointment-date-input"
             type="datetime-local" 
             value={appointmentDate} 
             onChange={(e) => setAppointmentDate(e.target.value)} 
             required 
           />
         </div>
-        <div>
-          <label>Issue:</label>
-          <textarea value={issue} onChange={(e) => setIssue(e.target.value)} required />
+        <div id="issue-textarea">
+          <label htmlFor="issue">Issue:</label>
+          <textarea 
+            id="issue"
+            value={issue} 
+            onChange={(e) => setIssue(e.target.value)} 
+            required 
+          />
         </div>
-        <button type="submit">Schedule Appointment</button>
+        <button type="submit" id="schedule-button">Schedule Appointment</button>
       </form>
 
-      <h2>Your Appointments</h2>
-      <ul>
-        {appointments.map(appointment => (
-          <li key={`${appointment.doctor_username}-${appointment.appointment_time}`}>
-            Dr. {appointment.doctor_username} - {appointment.appointment_time}: {appointment.description}
-          </li>
-        ))}
-      </ul>
+      <h2 id="appointments-header">Your Appointments</h2>
+      <table id="appointments-table" className="styled-table">
+        <thead>
+          <tr>
+            <th>Doctor Username</th>
+            <th>Appointment Time</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          {appointments.map(appointment => (
+            <tr key={`${appointment.doctor_username}-${appointment.appointment_time}`}>
+              <td>{appointment.doctor_username}</td>
+              <td>{appointment.appointment_time}</td>
+              <td>{appointment.description}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-      <h2>Your Medicines</h2>
-      <ul>
-        {prescriptions.map(prescription => (
-          <li key={`${prescription.doctor_username}-${prescription.patient_username}`}>
-            Prescribed by Dr. {prescription.doctor_username}: {prescription.prescription_details}
-          </li>
-        ))}
-      </ul>
+      <h2 id="medicines-header">Your Medicines</h2>
+      <table id="medicines-table" className="styled-table">
+        <thead>
+          <tr>
+            <th>Doctor Username</th>
+            <th>Prescription Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          {prescriptions.map(prescription => (
+            <tr key={`${prescription.doctor_username}-${prescription.patient_username}`}>
+              <td>{prescription.doctor_username}</td>
+              <td>{prescription.prescription_details}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
