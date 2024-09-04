@@ -1,0 +1,1 @@
+export const API_URL = 'https://sih-website-backend.onrender.com/';
