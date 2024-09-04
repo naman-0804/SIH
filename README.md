@@ -12,12 +12,12 @@ The website allows doctors to create accounts, view their patients, and manage t
 
 The key features of the website are:
 
-- **Doctor Registration**: Doctors can register on the website and create profiles.
+- **Doctor Registration**: Doctors can register under respective department on the website and create profiles.
 - **Patient Registration**: Patients can register on the website and create profiles.
 - **Doctor Login**: Doctors can log in to the website and access their panels.
 - **Patient Login**: Patients can log in to the website and access their panels.
-- **Doctor Panel**: Doctors can view their patients, manage their schedules, and update their profiles.
-- **Patient Panel**: Patients can view their doctors, book appointments, and update their profiles.
+- **Doctor Panel**: Doctors can view their patients, manage their schedules, and give them medicines.
+- **Patient Panel**: Patients can view their doctors, book appointments while specifying their issues, see their scheduled medicines.
 
 ## Installation
 
@@ -33,7 +33,7 @@ The key features of the website are:
     ```
 5. **Install dependencies:**
     ```bash
-    npm install
+    npm i
     ```
 
 ## Usage
@@ -41,7 +41,7 @@ The key features of the website are:
 1. **Run the Flask server:**
     ```bash
     cd Website/Backend
-    flask run
+    python backend.py
     ```
 2. **Run the React development server:**
     ```bash
@@ -49,12 +49,6 @@ The key features of the website are:
     npm start
     ```
 
-The website should now be accessible at `http://localhost:3000`.
+The website should now be accessible at `https://sihsite.vercel.app/`.
 
-## Contact Information
-
-For any issues or inquiries, please contact the project maintainers:
-
-- [Email Address](mailto:your_email@example.com)
-- [Website](https://your_website.com)
 
