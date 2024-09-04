@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import '../pages/Css/Doctorpanel.css'; 
 
 function DoctorPanel() {
   const [userData, setUserData] = useState(null);
@@ -64,28 +65,48 @@ function DoctorPanel() {
   }
 
   return (
-    <div>
-      {error && <p>{error}</p>}
-      {userData && <p>Welcome, Dr. {userData.username}!</p>}
+    <div className="doctor-panel-container">
+      {error && <p className="error">{error}</p>}
+      {userData && <h1>Welcome, Dr. {userData.username}!</h1>}
 
       <h2>Patient List</h2>
-      <ul>
-        {patients.map(patient => (
-          <li key={patient.username}>{patient.username}</li>
-        ))}
-      </ul>
+      <table className="styled-table">
+        <thead>
+          <tr>
+            <th>Username</th>
+          </tr>
+        </thead>
+        <tbody>
+          {patients.map(patient => (
+            <tr key={patient.username}>
+              <td>{patient.username}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
       <h2>Appointments</h2>
-      <ul>
-        {appointments.map(appointment => (
-          <li key={`${appointment.doctor_username}-${appointment.patient_username}-${appointment.appointment_time}`}>
-            {appointment.patient_username} - {appointment.appointment_time}: {appointment.description}
-          </li>
-        ))}
-      </ul>
+      <table className="styled-table">
+        <thead>
+          <tr>
+            <th>Patient Username</th>
+            <th>Appointment Time</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          {appointments.map(appointment => (
+            <tr key={`${appointment.doctor_username}-${appointment.patient_username}-${appointment.appointment_time}`}>
+              <td>{appointment.patient_username}</td>
+              <td>{appointment.appointment_time}</td>
+              <td>{appointment.description}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
       <h2>Prescribe Medicine</h2>
-      <form onSubmit={handlePrescriptionSubmit}>
+      <form onSubmit={handlePrescriptionSubmit} className="prescription-form">
         <div>
           <label>Select Patient:</label>
           <select value={selectedPatient} onChange={(e) => setSelectedPatient(e.target.value)} required>
