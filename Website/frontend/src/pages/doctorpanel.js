@@ -13,43 +13,34 @@ function DoctorPanel() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:5000/auth/get_user_data');
-        setUserData(response.data);
-      } catch (error) {
-        setError('Error fetching user data. Please log in.');
-      }
-    };
+        // Fetch user data
+        const userResponse = await axios.get('http://127.0.0.1:5000/auth/get_user_data');
+        setUserData(userResponse.data);
 
-    const fetchPatientList = async () => {
-      try {
-        const response = await axios.get('http://127.0.0.1:5000/doctors/patients', { withCredentials: true });
-        setPatients(response.data);
-      } catch (error) {
-        setError('Error fetching patient list.');
-      }
-    };
+        // Fetch patient list
+        const patientResponse = await axios.get('http://127.0.0.1:5000/doctors/patients', { withCredentials: true });
+        setPatients(patientResponse.data);
 
-    const fetchAppointments = async () => {
-      try {
-        const response = await axios.get('http://127.0.0.1:5000/doctors/appointments', { withCredentials: true });
-        setAppointments(response.data);
+        // Fetch appointments
+        const appointmentResponse = await axios.get('http://127.0.0.1:5000/doctors/appointments', { withCredentials: true });
+        setAppointments(appointmentResponse.data);
+
         // Filter patients based on appointments
-        if (response.data.length > 0) {
-          const patientUsernames = response.data.map(app => app.patient_username);
-          setFilteredPatients(patients.filter(patient => patientUsernames.includes(patient.username)));
+        if (appointmentResponse.data.length > 0) {
+          const patientUsernames = appointmentResponse.data.map(app => app.patient_username);
+          setFilteredPatients(patientResponse.data.filter(patient => patientUsernames.includes(patient.username)));
         }
       } catch (error) {
-        setError('Error fetching appointments.');
+        setError('Error fetching data.');
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchUserData();
-    fetchPatientList();
-    fetchAppointments();
-    setLoading(false);
-  }, [patients]);
+    fetchData();
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   const handlePrescriptionSubmit = async (e) => {
     e.preventDefault();
