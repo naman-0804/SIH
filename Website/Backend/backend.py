@@ -240,6 +240,18 @@ def schedule_appointment():
     }
     db.appointments.insert_one(appointment)
     return jsonify({'message': 'Appointment scheduled successfully'})
+@app.route('/patients/appointments', methods=['GET'])
+def get_appointments():
+    if 'logged_in' not in session or session['role'] != 'patient':
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    username = session['username']  # Get the logged-in patient's username
+    try:
+        # Retrieve all appointments for the logged-in patient
+        appointments = list(db.appointments.find({'patient_username': username}, {'_id': 0}))
+        return jsonify(appointments), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/patients/medicines', methods=['GET'])
 def get_medicine_list():
