@@ -1,19 +1,28 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import '../pages/Css/App.css'; // External CSS file
 
 function App() {
   return (
-    <div className="App">
-      <h1>Medical Admin Panel</h1>
-      <nav>
-        <ul>
-          <li><Link to="/doctorlogin">Doctor Login</Link></li>
-          <li><Link to="/patientlogin">Patient Login</Link></li>
-          <li><Link to="/register">Register</Link></li>
+    <div className="app-container">
+      <h1 className="app-title">Medical Admin Panel</h1>
+      <table className="navigation-table">
+        <thead>
 
-        </ul>
-      </nav>
-    </div> 
+        </thead>
+        <tbody>
+          <tr>
+            <td><Link to="/doctorlogin" className="nav-link">Doctor Login</Link></td>
+          </tr>
+          <tr>
+            <td><Link to="/patientlogin" className="nav-link">Patient Login</Link></td>
+          </tr>
+          <tr>
+            <td><Link to="/register" className="nav-link">Register</Link></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   );
 }
 

@@ -65,6 +65,16 @@ function PatientPanel() {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await axios.post('http://127.0.0.1:5000/auth/logout', {}, { withCredentials: true });
+      // Redirect to login page or home page after logout
+      window.location.href = '/'; // Adjust this as necessary for your app's routing
+    } catch (error) {
+      setError('Error logging out.');
+    }
+  };
+
   if (!userData) {
     return <p>Loading...</p>;
   }
@@ -76,7 +86,11 @@ function PatientPanel() {
   return (
     <div className="patient-panel-container">
       {error && <p id="error-message">{error}</p>}
-      {userData && <h1 id="welcome-message">Welcome, {userData.username}!</h1>}
+      {userData && (
+        <>
+          <h1 id="welcome-message">Welcome, {userData.username}!</h1>
+        </>
+      )}
 
       <h2 id="schedule-appointment-header">Schedule Appointment</h2>
       <form onSubmit={handleAppointmentSubmit} id="appointment-form">
@@ -167,6 +181,7 @@ function PatientPanel() {
           ))}
         </tbody>
       </table>
+      <button onClick={handleLogout} id="logout-button">Log Out</button>
     </div>
   );
 }

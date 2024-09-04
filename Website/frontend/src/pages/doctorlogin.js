@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import '../pages/Css/Doctorlogin.css'; // Import the external CSS
 
 axios.defaults.withCredentials = true;
 
@@ -21,6 +22,7 @@ function DoctorLogin() {
         setMessage('Login Successful! Redirecting...');
         navigate('/DoctorPanel');
       } else {
+
         navigate('/DoctorPanel');
       }
     } catch (error) {
@@ -28,30 +30,39 @@ function DoctorLogin() {
       setMessage('An error occurred. Please try again later.');
     }
   };
+  const handleBack = () => {
+    navigate('/'); // Navigate to the home page
+  };
   
   return (
-    <div>
-      <h2>Doctor Login</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>Username:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
-        <div>
-          <label>Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <button type="submit">Login</button>
-      </form>
-      {message && <p>{message}</p>}
+    <div className="login-container">
+      <div className="login-box">
+        <h2>Doctor Login</h2>
+        <form onSubmit={handleLogin}>
+          <div className="form-group">
+            <label>Username:</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Password:</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" className="login-button">Login</button>
+          <br></br><br></br>
+          <button type="button" className="back-button" onClick={handleBack}>Back</button>
+        </form>
+        {message && <p className="message">{message}</p>}
+      </div>
     </div>
   );
 }

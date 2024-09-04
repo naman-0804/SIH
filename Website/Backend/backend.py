@@ -21,7 +21,6 @@ app.config['SESSION_COOKIE_SECURE'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
 Session(app)
 
-# Specify allowed origins
 CORS(app, resources={r"/auth/*": {
     "origins": ["http://localhost:3000"], 
     "methods": ["POST", "OPTIONS", "GET"],
@@ -167,7 +166,10 @@ def login():
     else:
         return make_response(jsonify({'error': 'Invalid credentials'}), 400)
     pass
-
+@app.route('/auth/logout', methods=['POST'])
+def logout():
+    # Your logout logic here
+    return jsonify({'message': 'Logged out successfully'})
 @app.route('/auth/get_user_data', methods=['GET'])
 def get_user_data():
     if 'logged_in' not in session or not session['logged_in']:
