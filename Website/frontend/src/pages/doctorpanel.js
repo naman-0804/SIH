@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../pages/Css/Doctorpanel.css'; 
-
+import { API_URL } from '../helper';
 function DoctorPanel() {
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState('');
@@ -16,15 +16,15 @@ function DoctorPanel() {
     const fetchData = async () => {
       try {
         // Fetch user data
-        const userResponse = await axios.get('http://127.0.0.1:5000/auth/get_user_data');
+        const userResponse = await axios.get(`${API_URL}/auth/get_user_data`);
         setUserData(userResponse.data);
 
         // Fetch patient list
-        const patientResponse = await axios.get('http://127.0.0.1:5000/doctors/patients', { withCredentials: true });
+        const patientResponse = await axios.get(`${API_URL}/doctors/patients`, { withCredentials: true });
         setPatients(patientResponse.data);
 
         // Fetch appointments
-        const appointmentResponse = await axios.get('http://127.0.0.1:5000/doctors/appointments', { withCredentials: true });
+        const appointmentResponse = await axios.get(`${API_URL}/doctors/appointments`, { withCredentials: true });
         setAppointments(appointmentResponse.data);
 
         // Filter patients based on appointments
@@ -40,12 +40,12 @@ function DoctorPanel() {
     };
 
     fetchData();
-  }, []); // Empty dependency array ensures this runs only once on mount
+  }, []); 
 
   const handlePrescriptionSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://127.0.0.1:5000/doctors/prescriptions', {
+      await axios.post(`${API_URL}/doctors/prescriptions`, {
         patient_username: selectedPatient,
         prescription_details: prescriptionDetails
       }, { withCredentials: true });
@@ -58,9 +58,9 @@ function DoctorPanel() {
   };
   const handleLogout = async () => {
     try {
-      await axios.post('http://127.0.0.1:5000/auth/logout', {}, { withCredentials: true });
-      // Redirect to login page or home page after logout
-      window.location.href = '/'; // Adjust this as necessary for your app's routing
+      await axios.post(`${API_URL}/auth/logout`, {}, { withCredentials: true });
+    
+      window.location.href = '/'; 
     } catch (error) {
       setError('Error logging out.');
     }

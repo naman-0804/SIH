@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../pages/Css/Patientlogin.css'; 
-
+import { API_URL } from '../helper';
 axios.defaults.withCredentials = true;
 
 function PatientLogin() {
@@ -14,7 +14,7 @@ function PatientLogin() {
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post('http://127.0.0.1:5000/auth/login', { username, password, role: 'patient' });
+      const response = await axios.post(`${API_URL}/auth/login`, { username, password, role: 'patient' });
       
       console.log("Response data:", response.data);
   

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../pages/Css/Patientpanel.css'; 
-
+import { API_URL } from '../helper';
 function PatientPanel() {
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState('');
@@ -23,18 +23,18 @@ function PatientPanel() {
     const fetchData = async () => {
       try {
 
-        const userResponse = await axios.get('http://127.0.0.1:5000/auth/get_user_data');
+        const userResponse = await axios.get(`${API_URL}/auth/get_user_data`);
         setUserData(userResponse.data);
 
  
-        const doctorResponse = await axios.get('http://127.0.0.1:5000/patients/doctors', { withCredentials: true });
+        const doctorResponse = await axios.get(`${API_URL}/patients/doctors`, { withCredentials: true });
         setDoctors(doctorResponse.data);
 
-        const appointmentResponse = await axios.get('http://127.0.0.1:5000/patients/appointments', { withCredentials: true });
+        const appointmentResponse = await axios.get(`${API_URL}/patients/appointments`, { withCredentials: true });
         setAppointments(appointmentResponse.data);
 
 
-        const prescriptionResponse = await axios.get('http://127.0.0.1:5000/patients/medicines', { withCredentials: true });
+        const prescriptionResponse = await axios.get(`${API_URL}/patients/medicines`, { withCredentials: true });
         setPrescriptions(prescriptionResponse.data);
       } catch (error) {
         setError('Error fetching data.');
@@ -47,7 +47,7 @@ function PatientPanel() {
   const handleAppointmentSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://127.0.0.1:5000/patients/appointments', {
+      await axios.post(`${API_URL}/patients/appointments`, {
         doctor_username: selectedDoctor,
         appointment_time: appointmentDate,
         description: issue
@@ -57,7 +57,7 @@ function PatientPanel() {
       setAppointmentDate('');
       setIssue('');
 
-      const response = await axios.get('http://127.0.0.1:5000/patients/appointments', { withCredentials: true });
+      const response = await axios.get(`${API_URL}/patients/appointments`, { withCredentials: true });
       setAppointments(response.data);
     } catch (error) {
       setError('Error scheduling appointment.');
@@ -66,7 +66,7 @@ function PatientPanel() {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://127.0.0.1:5000/auth/logout', {}, { withCredentials: true });
+      await axios.post(`${API_URL}/auth/logout`, {}, { withCredentials: true });
 
       window.location.href = '/'; 
     } catch (error) {
