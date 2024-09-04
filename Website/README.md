@@ -1,2 +1,0 @@
-# SIH
-About us here
