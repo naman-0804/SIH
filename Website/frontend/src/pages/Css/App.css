@@ -1,0 +1,36 @@
+/* App.css */
+.app-container {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .app-title {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  .navigation-table {
+    margin: 0 auto;
+    border-collapse: collapse;
+    width: 50%;
+  }
+  
+  .navigation-table th, .navigation-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+  }
+  
+  .navigation-table th {
+    background-color: #f4f4f4;
+  }
+  
+  .nav-link {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+  }
+  
+  .nav-link:hover {
+    text-decoration: underline;
+  }
+  

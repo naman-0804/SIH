@@ -1,0 +1,61 @@
+/* PatientPanel.css */
+
+.patient-panel-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  #error-message {
+    color: red;
+  }
+  
+  #welcome-message {
+    color: green;
+  }
+  
+  #schedule-appointment-header, #appointments-header, #medicines-header {
+    margin-top: 20px;
+  }
+  
+  #appointment-form {
+    margin-top: 10px;
+  }
+  
+  #department-select, #doctor-select, #appointment-date, #issue-textarea {
+    margin-bottom: 15px;
+  }
+  
+  #schedule-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+  
+  #appointments-list, #medicines-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  #appointments-list li, #medicines-list li {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+  }
+  #logout-button {
+    background-color: #f44336; 
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-top: 10px;
+    cursor: pointer;
+  }
