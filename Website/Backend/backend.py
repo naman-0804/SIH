@@ -51,7 +51,6 @@ def after_request(response):
     return response
 
 
-# MongoDB configuration
 client = MongoClient(
     'mongodb+srv://namansrivastava1608:sihsite@sihsite.oecua77.mongodb.net/?retryWrites=true&w=majority&appName=sihsite',
     tls=True
@@ -79,7 +78,6 @@ class PrescriptionForm(FlaskForm):
     patient_username = StringField('Patient Username', validators=[DataRequired()])
     prescription_details = TextAreaField('Prescription Details', validators=[DataRequired()])
 
-# Views
 class DoctorView(ModelView):
     column_list = ('username', 'password', 'department')
     form = DoctorForm
@@ -103,10 +101,10 @@ admin.add_view(AppointmentView(db.appointments, 'Appointments'))
 admin.add_view(PrescriptionView(db.prescriptions, 'Prescriptions'))
 
 def initialize_db():
-    # Check if collections already exist
+
     collections = db.list_collection_names()
 
-    # If collections don't exist, create them
+
     if 'doctors' not in collections:
         db.create_collection('doctors')
     if 'patients' not in collections:
@@ -116,7 +114,7 @@ def initialize_db():
     if 'prescriptions' not in collections:
         db.create_collection('prescriptions')
 
-    # Create indexes
+
     db.doctors.create_index('username', unique=True)
     db.patients.create_index('username', unique=True)
     db.appointments.create_index([('doctor_username', 1), ('patient_username', 1), ('appointment_time', 1)], unique=True)
@@ -128,7 +126,7 @@ initialize_db()
 def home():
     return render_template_string('<h1>Welcome to the Admin Panel</h1><p>You can access the admin panel at <a href="/admin">/admin</a></p>')
 
-# Authentication routes
+
 @app.route('/auth/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -266,9 +264,8 @@ def get_appointments():
     if 'logged_in' not in session or session['role'] != 'patient':
         return jsonify({'error': 'Unauthorized'}), 403
     
-    username = session['username']  # Get the logged-in patient's username
+    username = session['username']  
     try:
-        # Retrieve all appointments for the logged-in patient
         appointments = list(db.appointments.find({'patient_username': username}, {'_id': 0}))
         return jsonify(appointments), 200
     except Exception as e:
