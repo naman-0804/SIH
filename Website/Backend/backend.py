@@ -22,7 +22,7 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
 Session(app)
 
 CORS(app, resources={r"/auth/*": {
-    "origins": ["http://localhost:3000"], 
+    "origins": ["https://sihsite-1fu04zlka-un-identifieds-projects.vercel.app"], 
     "methods": ["POST", "OPTIONS", "GET"],
     "allow_headers": ["Content-Type", "Authorization"],
     "supports_credentials": True
@@ -30,7 +30,7 @@ CORS(app, resources={r"/auth/*": {
 
 @app.after_request
 def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+    response.headers.add('Access-Control-Allow-Origin', 'https://sihsite-1fu04zlka-un-identifieds-projects.vercel.app')
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
     response.headers.add('Access-Control-Allow-Credentials', 'true')
