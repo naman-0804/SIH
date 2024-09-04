@@ -31,11 +31,10 @@ CORS(app, resources={r"/auth/*": {
     "supports_credentials": True
 }})
 
-
 @app.after_request
 def after_request(response):
     allowed_origins = [
-        'https://sihsite-mi4q8sznj-un-identifieds-projects.vercel.app',
+        'https://sihsite.vercel.app',
         'http://localhost:3000'
     ]
     
@@ -43,6 +42,8 @@ def after_request(response):
     
     if origin in allowed_origins:
         response.headers.add('Access-Control-Allow-Origin', origin)
+    else:
+        response.headers.add('Access-Control-Allow-Origin', 'null')  # Default value if origin is not in allowed list
     
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
