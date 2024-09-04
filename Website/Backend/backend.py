@@ -22,19 +22,34 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
 Session(app)
 
 CORS(app, resources={r"/auth/*": {
-    "origins": ["https://sihsite-1fu04zlka-un-identifieds-projects.vercel.app"], 
+    "origins": [
+        "https://sihsite-mi4q8sznj-un-identifieds-projects.vercel.app", 
+        "http://localhost:3000"
+    ], 
     "methods": ["POST", "OPTIONS", "GET"],
     "allow_headers": ["Content-Type", "Authorization"],
     "supports_credentials": True
 }})
 
+
 @app.after_request
 def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', 'https://sihsite-1fu04zlka-un-identifieds-projects.vercel.app')
+    allowed_origins = [
+        'https://sihsite-mi4q8sznj-un-identifieds-projects.vercel.app',
+        'http://localhost:3000'
+    ]
+    
+    origin = request.headers.get('Origin')
+    
+    if origin in allowed_origins:
+        response.headers.add('Access-Control-Allow-Origin', origin)
+    
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
     response.headers.add('Access-Control-Allow-Credentials', 'true')
+    
     return response
+
 
 # MongoDB configuration
 client = MongoClient(
