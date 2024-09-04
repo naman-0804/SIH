@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../pages/Css/Doctorlogin.css'; // Import the external CSS
+import '../pages/Css/Doctorlogin.css'; 
 
 axios.defaults.withCredentials = true;
 
@@ -31,7 +31,7 @@ function DoctorLogin() {
     }
   };
   const handleBack = () => {
-    navigate('/'); // Navigate to the home page
+    navigate('/'); 
   };
   
   return (

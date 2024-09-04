@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../pages/Css/App.css'; // External CSS file
+import '../pages/Css/App.css'; 
 
 function App() {
   return (

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-import '../pages/Css/Register.css'; // External CSS file
+import '../pages/Css/Register.css'; 
 
 function Register() {
   const [username, setUsername] = useState('');
@@ -26,7 +26,7 @@ function Register() {
     }
   };
   const handleBack = () => {
-    navigate('/'); // Navigate to the home page
+    navigate('/'); 
   };
   return (
     <div className="register-container">

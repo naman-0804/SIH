@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../pages/Css/Patientlogin.css'; // Import the external CSS
+import '../pages/Css/Patientlogin.css'; 
 
 axios.defaults.withCredentials = true;
 
@@ -16,7 +16,7 @@ function PatientLogin() {
     try {
       const response = await axios.post('http://127.0.0.1:5000/auth/login', { username, password, role: 'patient' });
       
-      console.log("Response data:", response.data); // Log the response data
+      console.log("Response data:", response.data);
   
       if (response.data.loginStatus === 'true') {
         setMessage('Login Successful! Redirecting...');
@@ -30,7 +30,7 @@ function PatientLogin() {
     }
   };
   const handleBack = () => {
-    navigate('/'); // Navigate to the home page
+    navigate('/'); 
   };
   
   return (

@@ -22,19 +22,18 @@ function PatientPanel() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch user data
+
         const userResponse = await axios.get('http://127.0.0.1:5000/auth/get_user_data');
         setUserData(userResponse.data);
 
-        // Fetch doctors
+ 
         const doctorResponse = await axios.get('http://127.0.0.1:5000/patients/doctors', { withCredentials: true });
         setDoctors(doctorResponse.data);
 
-        // Fetch appointments
         const appointmentResponse = await axios.get('http://127.0.0.1:5000/patients/appointments', { withCredentials: true });
         setAppointments(appointmentResponse.data);
 
-        // Fetch prescriptions
+
         const prescriptionResponse = await axios.get('http://127.0.0.1:5000/patients/medicines', { withCredentials: true });
         setPrescriptions(prescriptionResponse.data);
       } catch (error) {
@@ -43,7 +42,7 @@ function PatientPanel() {
     };
 
     fetchData();
-  }, []); // Empty dependency array ensures this runs only once on mount
+  }, []); 
 
   const handleAppointmentSubmit = async (e) => {
     e.preventDefault();
@@ -57,7 +56,7 @@ function PatientPanel() {
       setSelectedDoctor('');
       setAppointmentDate('');
       setIssue('');
-      // Refresh the appointments list
+
       const response = await axios.get('http://127.0.0.1:5000/patients/appointments', { withCredentials: true });
       setAppointments(response.data);
     } catch (error) {
@@ -68,8 +67,8 @@ function PatientPanel() {
   const handleLogout = async () => {
     try {
       await axios.post('http://127.0.0.1:5000/auth/logout', {}, { withCredentials: true });
-      // Redirect to login page or home page after logout
-      window.location.href = '/'; // Adjust this as necessary for your app's routing
+
+      window.location.href = '/'; 
     } catch (error) {
       setError('Error logging out.');
     }
