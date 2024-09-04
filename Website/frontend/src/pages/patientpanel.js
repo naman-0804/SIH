@@ -10,6 +10,13 @@ function PatientPanel() {
   const [selectedDoctor, setSelectedDoctor] = useState('');
   const [appointmentDate, setAppointmentDate] = useState('');
   const [issue, setIssue] = useState('');
+  const [selectedDepartment, setSelectedDepartment] = useState('');
+  const [departments] = useState([
+    { value: 'medicine', label: 'Medicine' },
+    { value: 'orthopaedic', label: 'Orthopaedic' },
+    { value: 'ent', label: 'ENT' },
+    { value: 'general', label: 'General' }
+  ]);
 
   const fetchAppointments = async () => {
     try {
@@ -32,8 +39,8 @@ function PatientPanel() {
 
     const fetchDoctors = async () => {
       try {
-        // Assuming an endpoint exists to get the list of doctors
         const response = await axios.get('http://127.0.0.1:5000/patients/doctors', { withCredentials: true });
+        console.log('Doctors fetched:', response.data); // Debug log
         setDoctors(response.data);
       } catch (error) {
         setError('Error fetching doctor list.');
@@ -67,7 +74,6 @@ function PatientPanel() {
       setSelectedDoctor('');
       setAppointmentDate('');
       setIssue('');
-      // Optionally refresh the appointments list after scheduling
       fetchAppointments();
     } catch (error) {
       setError('Error scheduling appointment.');
@@ -78,6 +84,13 @@ function PatientPanel() {
     return <p>Loading...</p>;
   }
 
+  const filteredDoctors = selectedDepartment
+    ? doctors.filter(doctor => doctor.department.toLowerCase() === selectedDepartment.toLowerCase())
+    : doctors;
+
+  console.log('Selected Department:', selectedDepartment); // Debug log
+  console.log('Filtered Doctors:', filteredDoctors); // Debug log
+
   return (
     <div>
       {error && <p>{error}</p>}
@@ -86,10 +99,19 @@ function PatientPanel() {
       <h2>Schedule Appointment</h2>
       <form onSubmit={handleAppointmentSubmit}>
         <div>
+          <label>Select Department:</label>
+          <select value={selectedDepartment} onChange={(e) => setSelectedDepartment(e.target.value)} required>
+            <option value="">--Select Department--</option>
+            {departments.map(dept => (
+              <option key={dept.value} value={dept.value}>{dept.label}</option>
+            ))}
+          </select>
+        </div>
+        <div>
           <label>Select Doctor:</label>
           <select value={selectedDoctor} onChange={(e) => setSelectedDoctor(e.target.value)} required>
             <option value="">--Select Doctor--</option>
-            {doctors.map(doctor => (
+            {filteredDoctors.map(doctor => (
               <option key={doctor.username} value={doctor.username}>{doctor.username}</option>
             ))}
           </select>

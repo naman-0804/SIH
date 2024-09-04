@@ -10,6 +10,7 @@ from wtforms.validators import DataRequired
 from datetime import timedelta
 from pymongo import MongoClient
 from flask import Flask, request, jsonify, make_response, session
+from wtforms import StringField, PasswordField, DateTimeField, TextAreaField, SelectField  # Import SelectField
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -47,7 +48,8 @@ db = client.sihsite
 class DoctorForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
-    role= StringField('Role',validators=[DataRequired()])
+    role = StringField('Role', validators=[DataRequired()])
+    department = SelectField('Department', choices=[('medicine', 'Medicine'), ('orthopaedic', 'Orthopaedic'), ('ent', 'ENT'), ('general', 'General')], validators=[DataRequired()])
 class PatientForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
@@ -65,7 +67,7 @@ class PrescriptionForm(FlaskForm):
 
 # Views
 class DoctorView(ModelView):
-    column_list = ('username', 'password')
+    column_list = ('username', 'password', 'department')
     form = DoctorForm
 
 class PatientView(ModelView):
@@ -119,6 +121,7 @@ def register():
     username = data.get('username')
     password = data.get('password')
     role = data.get('role')  # 'doctor' or 'patient'
+    department = data.get('department') if role == 'doctor' else None
 
     if not username or not password or not role:
         return make_response(jsonify({'error': 'Missing fields'}), 400)
@@ -128,7 +131,7 @@ def register():
     if role == 'doctor':
         if db.doctors.find_one({'username': username}):
             return make_response(jsonify({'error': 'User already exists'}), 400)
-        db.doctors.insert_one({'username': username, 'password': hashed_password})
+        db.doctors.insert_one({'username': username, 'password': hashed_password, 'department': department})
     elif role == 'patient':
         if db.patients.find_one({'username': username}):
             return make_response(jsonify({'error': 'User already exists'}), 400)
@@ -137,6 +140,7 @@ def register():
         return make_response(jsonify({'error': 'Invalid role'}), 400)
 
     return jsonify({'message': 'User registered successfully'})
+
 
 @app.route('/auth/login', methods=['POST'])
 def login():

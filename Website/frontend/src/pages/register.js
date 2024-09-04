@@ -5,12 +5,18 @@ function Register() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('doctor');
+  const [department, setDepartment] = useState('Medicine'); // New state for department
   const [message, setMessage] = useState('');
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://127.0.0.1:5000/auth/register', { username, password, role });
+      const response = await axios.post('http://127.0.0.1:5000/auth/register', {
+        username,
+        password,
+        role,
+        department: role === 'doctor' ? department : null, // Send department only if the role is doctor
+      });
       setMessage(response.data.message);
     } catch (error) {
       setMessage(error.response.data.error);
@@ -36,6 +42,17 @@ function Register() {
             <option value="patient">Patient</option>
           </select>
         </div>
+        {role === 'doctor' && (
+          <div>
+            <label>Department:</label>
+            <select value={department} onChange={(e) => setDepartment(e.target.value)}>
+              <option value="Medicine">Medicine</option>
+              <option value="Orthopaedic">Orthopaedic</option>
+              <option value="ENT">ENT</option>
+              <option value="General">General</option>
+            </select>
+          </div>
+        )}
         <button type="submit">Register</button>
       </form>
       {message && <p>{message}</p>}
