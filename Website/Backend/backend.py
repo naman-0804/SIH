@@ -11,6 +11,7 @@ from datetime import timedelta
 from pymongo import MongoClient
 from flask import Flask, request, jsonify, make_response, session
 from wtforms import StringField, PasswordField, DateTimeField, TextAreaField, SelectField  # Import SelectField
+from flask import Flask, redirect
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -124,8 +125,7 @@ initialize_db()
 
 @app.route('/')
 def home():
-    return render_template_string('<h1>Welcome to the Admin Panel</h1><p>You can access the admin panel at <a href="/admin">/admin</a></p>')
-
+    return redirect('/admin')
 
 @app.route('/auth/register', methods=['POST'])
 def register():
