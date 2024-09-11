@@ -109,7 +109,7 @@ function DoctorPanel() {
           ))}
         </tbody>
       </table>
-
+      <button onClick={() => window.location.href = 'https://sl-health.vercel.app'}>Go to Videocall</button>
       <h2>Prescribe Medicine</h2>
       <form onSubmit={handlePrescriptionSubmit} className="prescription-form">
         <div>

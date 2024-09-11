@@ -81,7 +81,6 @@ function PatientPanel() {
   const filteredDoctors = selectedDepartment
     ? doctors.filter(doctor => doctor.department.toLowerCase() === selectedDepartment.toLowerCase())
     : doctors;
-
   return (
     <div className="patient-panel-container">
       {error && <p id="error-message">{error}</p>}
@@ -162,7 +161,7 @@ function PatientPanel() {
           ))}
         </tbody>
       </table>
-
+      <button onClick={() => window.location.href = 'https://sl-health.vercel.app'}>Go to Videocall</button>
       <h2 id="medicines-header">Your Medicines</h2>
       <table id="medicines-table" className="styled-table">
         <thead>
